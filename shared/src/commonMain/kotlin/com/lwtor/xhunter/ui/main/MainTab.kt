@@ -11,8 +11,8 @@ enum class MainTab(
     val label: String,
     val icon: ImageVector,
 ) {
-    Home(label = "首页", icon = Icons.Filled.Home),
-    Favorites(label = "收藏", icon = Icons.Filled.Favorite),
-    Explore(label = "探索", icon = Icons.Filled.Search),
-    Profile(label = "个人", icon = Icons.Filled.Person),
+    HOME(label = "首页", icon = Icons.Filled.Home),
+    FAVORITES(label = "收藏", icon = Icons.Filled.Favorite),
+    EXPLORE(label = "探索", icon = Icons.Filled.Search),
+    PROFILE(label = "个人", icon = Icons.Filled.Person),
 }

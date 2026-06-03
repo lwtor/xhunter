@@ -90,4 +90,34 @@
 
 ---
 
-<!-- 第 2.2 步完成后从这里开始追加 -->
+## 2026-06-03 第 2.2.a 步 主页框架 — Decompose 路由接入
+
+**改动文件清单**：
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/RootComponent.kt` — 新增，`RootComponent` 接口 + `DefaultRootComponent` 实现，承载 `selectedTab: Value<MainTab>` 状态（类委托 `ComponentContext`）
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/MainScreen.kt` — 改造：签名改为 `MainScreen(component: RootComponent)`，删 `rememberSaveable`，改用 `component.selectedTab.subscribeAsState()` 订阅状态
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/App.kt` — 签名改为 `App(rootComponent: RootComponent)`，去掉 `@Preview`
+- `shared/src/androidMain/kotlin/com/lwtor/xhunter/ui/main/MainScreenPreview.kt` — 新增，androidMain 跨模块 Preview（4 Tab 各一份 + 私有 `PreviewRootComponent` 假实现）
+- `androidApp/src/main/kotlin/com/lwtor/xhunter/MainActivity.kt` — `defaultComponentContext()` 在 `super.onCreate` **之前**调用创建 `DefaultRootComponent`，再 `setContent { App(rootComponent = root) }`
+- `gradle/libs.versions.toml` — 新增 `decompose = "3.2.2"` 版本 + `decompose` / `decompose-extensions-compose` 两个 library 别名
+- `shared/build.gradle.kts` — `commonMain.dependencies` 追加 decompose + decompose-extensions-compose
+- `androidApp/build.gradle.kts` — 追加 `implementation(libs.decompose)`（让 `defaultComponentContext()` 可用）
+- `docs/dev-logs/2.2-a-decompose/01-spec.md` / `02-qa.md` / `03-review.md` / `04-summary.md` — 本步开发文档归档
+
+**功能变化**：
+- 旋转屏幕（横竖屏切换）后，**当前选中 Tab 不丢失**（与 2.1 视觉一致，但底层换成 Decompose 驱动）
+- App 启动入口从"自管理状态"切换为"由 Decompose RootComponent 驱动状态"，为后续详情页/阅读器嵌套导航打好基础
+
+**学习要点**：
+- Decompose 心智模型：Component = ViewModel + Navigation 合体；状态用 `Value<T>` / `MutableValue<T>` 表达，类似 `StateFlow` 范式（`MutableValue` 私有 + `Value` 对外只读）
+- 类委托 `class X : Y by y`：`DefaultRootComponent` 通过 `ComponentContext by componentContext` 自动获得全部上下文方法，为后续 `childContext("xxx")` 留好通道
+- `Value.subscribeAsState()`（来自 `decompose-extensions-compose`）是 Decompose ↔ Compose 的桥接点；Component 本身完全不依赖 Compose，**可以纯 JVM 单测**
+- **关键坑点**：`defaultComponentContext()` 必须在 `super.onCreate(savedInstanceState)` **之前**调用（要 hook savedStateRegistry 注册窗口）—— spec 第一版写错，已在编码中纠正
+- commonMain ↔ androidMain Preview 拆分：带必填参数的 Composable 不能直接 `@Preview`，改放 `shared/src/androidMain` 用私有假实现 + 4 Tab 各一份，IDE 能就近渲染（比放 androidApp 体验好）
+
+**遗留项**：
+- TODO-2.2-1：`MainScreen.kt` 第 60-73 行旧 `MainScreenPreview()` 残留，建议在 2.2.b 顺手清理（详见 `docs/dev-logs/2.2-a-decompose/04-summary.md` §五）
+- TODO-2.2-2（可选）：`MainScreen.kt` 内层 Box 嵌套可扁平化为单层 `contentAlignment = Alignment.Center`
+
+---
+
+<!-- 第 2.2.b 步完成后从这里开始追加 -->

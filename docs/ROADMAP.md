@@ -47,15 +47,30 @@
 | 完成验收 | 4 个 Tab 可点击切换，每个 Tab 中央显示对应名字 |
 | 实际产物 | `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/MainTab.kt` + `MainScreen.kt`；`App.kt` 改造为 `MaterialTheme { MainScreen() }`；归档于 `docs/dev-logs/2.1-bottom-tabs-ui/` |
 
-#### 2.2 Decompose 路由 + Koin DI
+#### 2.2 Decompose 路由 + Koin DI（再拆 a/b 两小步）
+
+##### 2.2.a Decompose 路由接入 ✅（2026-06-03 完成）
 
 | 字段 | 内容 |
 | --- | --- |
-| 目标 | 4 Tab 切换有返回栈、状态保存；Koin Module 跑通 |
-| AI 角色 | 出 `RootComponent` / `ChildStack` 骨架 + Koin Module 模板 |
-| 用户角色 | 接线 Component 与 ViewModel；在 Application/MainActivity 启动 Koin |
-| 涉及模块 | composeApp / core-common（MVI 基类） |
-| 完成验收 | 切到 Tab2 → 系统返回键能回到 Tab1；Koin 注入打 log 验证 |
+| 目标 | 用 `RootComponent` 替换 `rememberSaveable` 自管理状态，旋转屏幕保留 Tab |
+| AI 角色 | 出 `RootComponent` 接口 + `DefaultRootComponent` 实现骨架 + 跨模块 Preview 方案 |
+| 用户角色 | 实现 Component、改造 `MainScreen` / `App` / `MainActivity` |
+| 涉及模块 | shared（commonMain + androidMain）/ androidApp |
+| 完成验收 | 旋转屏幕选中 Tab 不丢失；`App` 不再持有 selected 状态；`RootComponent` 概念上可单测 |
+| 实际产物 | `RootComponent.kt` + `MainScreenPreview.kt`（androidMain）；`MainScreen.kt` / `App.kt` / `MainActivity.kt` 改造；新增 decompose 3.2.2 依赖；归档于 `docs/dev-logs/2.2-a-decompose/` |
+| 遗留项 | TODO-2.2-1（清理 `MainScreen.kt` 残留旧 Preview）/ TODO-2.2-2（可选 Box 扁平化） |
+
+##### 2.2.b Koin DI 接入
+
+| 字段 | 内容 |
+| --- | --- |
+| 目标 | 用 Koin 注入 `RootComponent` 替代 `MainActivity` 里的 `DefaultRootComponent(...)` new；Koin Module 跑通日志验证 |
+| AI 角色 | 出 Koin Module 模板 + `MyApplication` 启动模板 |
+| 用户角色 | 新建 `MyApplication`，写 Module，改造 `MainActivity` 用 `getKoin()` 取根 Component |
+| 涉及模块 | shared / androidApp |
+| 完成验收 | App 启动 logcat 看到 Koin 注入日志；Tab 切换/旋转保留功能不变 |
+| 顺手处理 | TODO-2.2-1 残留旧 Preview 清理 |
 
 #### 2.3 文档回填
 
@@ -322,7 +337,7 @@ AI：Code Review + 测试模板
 
 - [x] 计划制定完成（2026-06-02）
 - [x] 第 1 步：项目搭建（2026-06-02 完成）
-- [ ] 第 2 步：主页框架
+- [~] 第 2 步：主页框架（进行中：2.1 ✅ / 2.2.a ✅ / 2.2.b ⏳ / 2.3 ⏳）
 - [ ] 第 3 步：首页
 - [ ] 第 4 步：详情页
 - [ ] 第 5 步：阅读器

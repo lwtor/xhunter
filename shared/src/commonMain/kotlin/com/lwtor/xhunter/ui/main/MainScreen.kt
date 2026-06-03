@@ -10,25 +10,37 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 
 @Composable
 fun MainScreen(
-    modifier: Modifier = Modifier
+    component: RootComponent,
 ) {
 
-    var selectedTab by rememberSaveable { mutableStateOf(MainTab.Home) }
+    val selected by component.selectedTab.subscribeAsState()
 
     Scaffold(
-        modifier = modifier.fillMaxSize(), bottomBar = {
-            MainBottomBar(
-                selected = selectedTab, onSelect = { selectedTab = it })
-        }) { innerPadding ->
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            NavigationBar {
+                MainTab.entries.forEach { tab ->
+                    NavigationBarItem(
+                        selected = tab == selected,
+                        onClick = {
+                            component.onTabSelected(tab)
+                        },
+                        icon = { Icon(imageVector = tab.icon, contentDescription = tab.label) },
+                        label = { Text(text = tab.label) },
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(innerPadding)
         ) {
@@ -37,7 +49,7 @@ fun MainScreen(
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
-                    text = "${selectedTab.label} - TODO"
+                    text = "当前 Tab: ${selected.label}"
                 )
             }
         }
@@ -45,26 +57,17 @@ fun MainScreen(
 
 }
 
-@Composable
-private fun MainBottomBar(
-    selected: MainTab,
-    onSelect: (MainTab) -> Unit,
-) {
-    NavigationBar {
-        MainTab.entries.forEach { tab ->
-            NavigationBarItem(
-                selected = tab == selected,
-                onClick = { onSelect(tab) },
-                icon = { Icon(imageVector = tab.icon, contentDescription = tab.label) },
-                label = { Text(text = tab.label) },
-                alwaysShowLabel = true,
-            )
-        }
-    }
-}
-
 @Preview
 @Composable
 private fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(
+        component = object : RootComponent {
+            override val selectedTab: Value<MainTab>
+                get() = MutableValue(MainTab.HOME)
+
+            override fun onTabSelected(tab: MainTab) {
+
+            }
+        },
+    )
 }

@@ -2,13 +2,12 @@ package com.lwtor.xhunter
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import com.lwtor.xhunter.ui.main.MainScreen
+import com.lwtor.xhunter.ui.main.RootComponent
 
 @Composable
-@Preview
-fun App() {
+fun App(rootComponent: RootComponent) {
     MaterialTheme {
-        MainScreen()
+        MainScreen(component = rootComponent)
     }
 }
