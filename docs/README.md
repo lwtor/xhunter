@@ -24,7 +24,7 @@
 - 图片：Coil 3
 - JS 引擎（漫画源插件）：Android Zipline / iOS JavaScriptCore / Desktop GraalJS
 
-> 完整技术栈与引入步骤见 [`ROADMAP.md`](./ROADMAP.md) 与 [`ARCHITECTURE.md`](./ARCHITECTURE.md)（架构文档将在第 2.3 步回填）。
+> 完整技术栈与引入步骤见 [`ROADMAP.md`](./ROADMAP.md) 与 [`ARCHITECTURE.md`](./ARCHITECTURE.md)。
 
 ## 命名约定
 
@@ -65,8 +65,8 @@
 | [`DEVELOPMENT_RULES.md`](./DEVELOPMENT_RULES.md) | 编码规范 / Git 规范 / 命名约定 | ✅ 第 1 步建立 |
 | [`ROADMAP.md`](./ROADMAP.md) | 30+ 步骤总览（按"看得见的页面"切） | ✅ 第 1 步建立 |
 | [`CHANGELOG.md`](./CHANGELOG.md) | 每完成大步追加 | ✅ 第 1 步建立 |
-| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | 整体架构 + 模块依赖图 | ⏳ 第 2.3 步回填 |
-| [`MODULES.md`](./MODULES.md) | 各模块职责说明 | ⏳ 第 2.3 步回填 |
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | 整体架构思想 + MVI 数据流 + KMP 心智 + 6 项关键决策 | ✅ 第 2.3 步建立 |
+| [`MODULES.md`](./MODULES.md) | 工程模块视图：当前快照 + 目标蓝图 + 演进路线 + 新增模块 checklist | ✅ 第 2.3 步建立 |
 | [`LEARNING_NOTES.md`](./LEARNING_NOTES.md) | KMP 学习笔记（用户自填） | ⏳ 边做边记 |
 
 ## 协作模式

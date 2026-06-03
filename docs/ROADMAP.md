@@ -74,15 +74,17 @@
 | 遗留项 | LEGACY-2.2-b-1（`MainScreen.kt` 旧 Preview 暂保留）/ TODO-2.2-b-1（MainActivity 旧注释矛盾）/ TODO-2.2-b-2（`XHunterApplication` 类名大小写未对齐 spec） |
 | 关键踩坑 | Decompose 3.x 要求 `defaultComponentContext()` 在 `super.onCreate` **之后**调用（与 2.2.a spec 旧版描述相反），未改顺序会抛 `IllegalStateException: You can 'consumeRestoredStateForKey' only after the corresponding component has moved to the 'CREATED' state` |
 
-#### 2.3 文档回填
+#### 2.3 文档回填 ✅（2026-06-03 完成）
 
 | 字段 | 内容 |
 | --- | --- |
 | 目标 | docs/ARCHITECTURE.md + docs/MODULES.md 完成（带模块依赖 Mermaid 图） |
-| AI 角色 | 出文档草稿 |
+| AI 角色 | 出文档草稿（双视角：当前快照 + 目标蓝图 + 演进路线） |
 | 用户角色 | 检查并补充 |
 | 涉及模块 | docs/ |
 | 完成验收 | 两份文档存在并能在 GitHub 渲染 Mermaid |
+| 实际产物 | `docs/ARCHITECTURE.md`（架构思想 / KMP 心智 / MVI 数据流 / Clean 分层 / 6 项决策卡）+ `docs/MODULES.md`（当前快照 + 目标蓝图 + 演进路线 + 新增模块 6 步 checklist）；顺手更新 `docs/README.md` 文档地图段落；归档于 `docs/dev-logs/2.3-arch-docs/` |
+| 快照机制 | 两份文档顶部均标 `📌 快照截止步骤：2.2.b`，后续每次拆模块时由对应步骤的阶段 E 同步前移 |
 
 ---
 
@@ -339,7 +341,7 @@ AI：Code Review + 测试模板
 
 - [x] 计划制定完成（2026-06-02）
 - [x] 第 1 步：项目搭建（2026-06-02 完成）
-- [~] 第 2 步：主页框架（进行中：2.1 ✅ / 2.2.a ✅ / 2.2.b ✅ / 2.3 ⏳）
+- [~] 第 2 步：主页框架（进行中：2.1 ✅ / 2.2.a ✅ / 2.2.b ✅ / 2.3 ✅）
 - [ ] 第 3 步：首页
 - [ ] 第 4 步：详情页
 - [ ] 第 5 步：阅读器
