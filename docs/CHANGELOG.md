@@ -121,3 +121,34 @@
 ---
 
 <!-- 第 2.2.b 步完成后从这里开始追加 -->
+
+## 2026-06-03 第 2.2.b 步 主页框架 — Koin DI 接入
+
+**改动文件清单**：
+- `gradle/libs.versions.toml` — 新增 `koin = "4.0.0"` 版本 + `koin-core` / `koin-android` 两个 library 别名
+- `shared/build.gradle.kts` — `commonMain.dependencies` 追加 `implementation(libs.koin.core)`
+- `androidApp/build.gradle.kts` — 追加 `implementation(libs.koin.android)`
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/di/SharedModule.kt` — 新增，`sharedModule = module { factory<RootComponent> { (ctx: ComponentContext) -> DefaultRootComponent(componentContext = ctx) } }`
+- `androidApp/src/main/kotlin/com/lwtor/xhunter/XHunterApplication.kt` — 新增，`Application.onCreate` 中 `startKoin { androidLogger(Level.INFO); androidContext(this@XHunterApplication); modules(sharedModule) }`
+- `androidApp/src/main/AndroidManifest.xml` — `<application>` 增加 `android:name=".XHunterApplication"`
+- `androidApp/src/main/kotlin/com/lwtor/xhunter/MainActivity.kt` — 改为 `super.onCreate` → `defaultComponentContext()` → `getKoin().get<RootComponent> { parametersOf(ctx) }` → `setContent` 顺序
+- `docs/dev-logs/2.2-b-koin/01-spec.md` / `02-qa.md` / `03-review.md` / `04-summary.md` — 本步开发文档归档
+
+**功能变化**：
+- 启动 logcat 过滤 `Koin` 关键字可见 `[Koin] Started 1 module(s)` 日志
+- Tab 切换 / 横竖屏旋转保留状态等行为与 2.2.a **完全一致**（本步是基础设施重构，用户视角无新功能）
+- `MainActivity` 不再 `new DefaultRootComponent(...)`，所有 Component 由 Koin 接管创建
+
+**学习要点**：
+- Koin 4.x 心智模型：`module {}` = 配方清单；`single<X> {}` = 全局单例；`factory<X> {}` = 每次现造（适合 `RootComponent` 这种持有 Activity 重建后会失效的 `ComponentContext` 的对象）；`get<X> { parametersOf(arg) }` = 带运行时参数取菜
+- KMP 项目 DI 分层：模块定义放 `shared/commonMain`（iOS/Desktop 可复用），平台 actual 注册放 `<platform>Main`，启动 Koin 放各 App 入口（Android 是 `Application.onCreate`）
+- **Decompose 3.x 与旧版关键差异**：`defaultComponentContext()` **必须在 `super.onCreate(savedInstanceState)` 之后**调用（新版会访问 `SavedStateRegistry`，需要 owner 已进入 CREATED）；旧版（≤ 2.x）是「之前」—— spec 一开始写错，跑闪退后定位修正
+- 接口注入（`factory<RootComponent>` 而非 `factory<DefaultRootComponent>`）符合依赖倒置，调用方不需要知道实现类
+- Module 用 `factory` 而非 `single`：避免 Activity 重建后旧 `ComponentContext` 被缓存继续用导致状态错乱
+
+**遗留项**：
+- LEGACY-2.2-b-1：`MainScreen.kt` 第 60-73 行旧 `MainScreenPreview()` 残留（用户本步决定保留，等 androidMain Preview 用顺手了再删）
+- TODO-2.2-b-1：`MainActivity.kt` 第 15-16 行注释还是旧版「必须在 super.onCreate 之前」，与实际代码顺序矛盾，下一步顺手改
+- TODO-2.2-b-2：类名大小写未对齐 spec（实际 `XHunterApplication` 大 H / spec `XhunterApplication` 小 h），建议改成小 h 与产品名锚点 `xhunter` 一致
+
+---

@@ -41,6 +41,7 @@ kotlin {
             implementation(libs.compose.material.icons.core)
             implementation(libs.decompose)
             implementation(libs.decompose.compose)
+            implementation(libs.koin.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
