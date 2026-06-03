@@ -36,7 +36,7 @@
 
 ### 第 2 步：主页框架（拆 3 小步）
 
-#### 2.1 底部 4 Tab UI 骨架
+#### 2.1 底部 4 Tab UI 骨架 ✅（2026-06-03 完成）
 
 | 字段 | 内容 |
 | --- | --- |
@@ -45,6 +45,7 @@
 | 用户角色 | 实现 Scaffold + NavigationBar 容器 |
 | 涉及模块 | composeApp / core-designsystem |
 | 完成验收 | 4 个 Tab 可点击切换，每个 Tab 中央显示对应名字 |
+| 实际产物 | `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/MainTab.kt` + `MainScreen.kt`；`App.kt` 改造为 `MaterialTheme { MainScreen() }`；归档于 `docs/dev-logs/2.1-bottom-tabs-ui/` |
 
 #### 2.2 Decompose 路由 + Koin DI
 

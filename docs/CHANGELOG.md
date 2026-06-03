@@ -65,4 +65,29 @@
 
 ---
 
-<!-- 第 2 步完成后从这里开始追加 -->
+## 2026-06-03 第 2.1 步 主页框架 — 底部 4 Tab UI 骨架
+
+**改动文件清单**：
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/MainTab.kt` — 新增，4 Tab 元数据 enum（Home/Favorites/Explore/Profile，含 label + Material `ImageVector` 图标）
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/MainScreen.kt` — 新增，`Scaffold` + `NavigationBar` 主页框架，`rememberSaveable` 保存当前 Tab，私有 `MainBottomBar` 抽出底栏渲染
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/App.kt` — 改造：移除 KMP 向导默认 hello 模板，改为 `MaterialTheme { MainScreen() }`
+- `gradle/libs.versions.toml` — 追加 `compose-material-icons-core` 依赖（`org.jetbrains.compose.material:material-icons-core:1.7.3`）
+- `shared/build.gradle.kts` — `commonMain.dependencies` 追加 `implementation(libs.compose.material.icons.core)`
+- `docs/dev-logs/2.1-bottom-tabs-ui/01-spec.md` / `02-qa.md` / `03-review.md` / `04-summary.md` — 本步开发文档归档
+
+**功能变化**：
+- App 启动后**不再**显示 KMP 向导的 "Click me" 默认页，改为底部 4 Tab 主页框架
+- 4 Tab：首页 / 收藏 / 探索 / 个人，点击切换内容区文字（如"首页 - TODO"）
+- 选中 Tab 在 Material3 默认配色下高亮，图标 + 文字双行常显
+- 旋转屏幕（横竖屏切换）后，当前选中 Tab **不丢失**
+
+**学习要点**：
+- `Scaffold` 的 `bottomBar` 槽位 + content lambda 拿到的 `innerPadding` 必须应用到内容容器，否则被底栏遮住
+- `rememberSaveable` vs `remember`：前者走 `Bundle` 序列化，配置变更/进程被回收后能恢复；Kotlin enum 在 JVM 上自动实现 `Serializable` 可直接保存，无需写 `Saver`
+- `MainTab.entries` 是 Kotlin 1.9+ 的属性式 API，零开销取代旧 `values()`
+- Compose Multiplatform 的 `material3` 依赖**不会自动传递**引入 Material Icons，`material-icons-core` 是独立 artifact 需单独声明（Q2 踩坑记录）
+- 业务 Composable 不包 `MaterialTheme`，由入口 Composable（`App.kt`）统一提供
+
+---
+
+<!-- 第 2.2 步完成后从这里开始追加 -->
