@@ -90,15 +90,18 @@
 
 ### 第 3 步：首页（拆 3 小步）
 
-#### 3.1 UI 骨架
+#### 3.1 UI 骨架 ✅（2026-06-03 完成）
 
 | 字段 | 内容 |
 | --- | --- |
 | 目标 | 顶部 TabBar（推荐/分类/排行）+ 漫画卡片网格（写死 8 张占位卡） |
-| AI 角色 | 出 `ExploreScreen` 骨架 + `ComicCard` 组件 |
-| 用户角色 | 调整网格列数/间距、ComicCard 内的标题/作者层级 |
-| 涉及模块 | feature-explore / core-designsystem |
-| 完成验收 | 首页 Tab 显示 8 张写死的卡片网格 |
+| AI 角色 | 出 `HomeScreen` 骨架 + `MainTab` 重构指引；本步起 UI 细节不再纳入 Review，AI 仅看逻辑 |
+| 用户角色 | 实现 HomeScreen 内部 UI 结构、卡片样式与 Tab 命名 |
+| 涉及模块 | shared（`ui.main` + 新增 `ui.home` 子包） |
+| 完成验收 | 主页 Tab 进入后看到首页内容；其他 3 Tab 仍是占位 Text；旋转屏幕保留状态 |
+| 实际产物 | `MainTab.kt`（`PROFILE → CATEGORIES`，icon 用 `Icons.Filled.Menu` 兜底）/ `MainScreen.kt`（内容区 `when (selected)` 分发，HOME → HomeScreen()）/ `ui/home/HomeScreen.kt` 新增；归档于 `docs/dev-logs/3.1-home-ui/` |
+| 协作边界变化 | **本步开始 AI 不再介入 UI 细节**（布局/视觉/文案/命名/文件拆分粒度），仅负责逻辑层（编译、KMP 边界、状态流、模块依赖、平台 API 隔离）；详见 `docs/dev-logs/3.1-home-ui/04-summary.md` §二 |
+| 关键踩坑 | `Icons.Filled.Category` / `Icons.Filled.GridView` 在当前 compose 版本的 core 包内均不存在，最终用 `Icons.Filled.Menu` 兜底（详见本步 02-qa.md）；MainScreen 出现过一行 IDE 误补全的 `import com.sun.tools.javac.Main`，KMP commonMain 严禁引 JDK 内部 API，已修复 |
 
 #### 3.2 ViewModel + MVI
 
@@ -341,8 +344,8 @@ AI：Code Review + 测试模板
 
 - [x] 计划制定完成（2026-06-02）
 - [x] 第 1 步：项目搭建（2026-06-02 完成）
-- [~] 第 2 步：主页框架（进行中：2.1 ✅ / 2.2.a ✅ / 2.2.b ✅ / 2.3 ✅）
-- [ ] 第 3 步：首页
+- [x] 第 2 步：主页框架（2026-06-03 完成：2.1 ✅ / 2.2.a ✅ / 2.2.b ✅ / 2.3 ✅）
+- [~] 第 3 步：首页（进行中：3.1 ✅）
 - [ ] 第 4 步：详情页
 - [ ] 第 5 步：阅读器
 - [ ] 第 6 步：收藏页

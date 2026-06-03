@@ -153,6 +153,36 @@
 
 ---
 
+## 2026-06-03 第 3.1 步 首页 — UI 骨架（含主页 Tab 命名修订 + 协作边界调整）
+
+**改动文件清单**：
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/MainTab.kt` — `PROFILE` 改名为 `CATEGORIES`；`CATEGORIES` 图标用 `Icons.Filled.Menu` 兜底（core 包不含 `Category` / `GridView`）
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/MainScreen.kt` — 内容区从单一占位 Text 改为 `when (selected)` 分发，HOME 分支调用 `HomeScreen()`
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/home/HomeScreen.kt` — 新增，首页落点；二级 Tab 状态用 `remember { mutableStateOf(...) }` 临时持有（3.2 步迁 ViewModel）；占位数据 `List(8) { ... }` 文件内 private 域生成（3.3 步换 Mock Repository）
+- `docs/dev-logs/3.1-home-ui/01-spec.md` / `02-qa.md` / `03-review.md` / `04-summary.md` — 本步开发文档归档
+- `docs/ROADMAP.md` / `docs/CHANGELOG.md` — 同步进度
+
+**功能变化**：
+- App 启动默认进入主页 Tab，看到首页内容（具体 UI 由用户实现，AI 不评）
+- 切到收藏 / 探索 / 分类 3 个 Tab 仍显示占位 Text（等后续 plan 步骤接管）
+- 第 4 个 Tab 名从「我的」改为「分类」（CATEGORIES），用 `Icons.Filled.Menu` 图标
+- 旋转屏幕、Tab 切换状态保留行为与 2.2.b 一致（Decompose Component 仍是状态权威）
+
+**协作边界调整（本步开始生效）**：
+- AI **不再介入 UI 细节**（布局结构 / 视觉细节 / 文案 / 命名风格 / 文件拆分粒度）
+- AI 仅负责**逻辑部分**：编译错误 / KMP commonMain 平台 API 隔离 / 状态流 / MVI 接线 / Decompose / Koin DI / 模块依赖方向 / expect-actual 边界 / 资源泄漏 / 生命周期 / 并发
+- 后续所有阶段（spec / qa / review / summary）严格遵守此分工；详见 `docs/dev-logs/3.1-home-ui/04-summary.md` §二
+
+**学习要点**：
+- Compose Material core 图标包仅含约十几个高确定性图标（Home / Favorite / Search / Person / Settings / Menu / Add / Close / Check / ArrowBack / MoreVert / Info / Star），其余如 `Category` / `GridView` / `Apps` / `Explore` 在当前 compose 版本下仍归 extended 包；为单个图标引 `compose.materialIconsExtended` 不划算（约 +10MB），优先用 core 内候选兜底
+- KMP commonMain 严禁引 `com.sun.*` / `sun.*` / `javax.*` 之外的 JVM 私有包；IDE 自动补全短名（Main / Context / Type / List 等）容易错配到 JDK 内部，提交前盯一下 import 块；detekt 可加 `ForbiddenImport` 黑名单（留到 11.3 步）
+- 子页面落点用"在 ui 下新建子包 + 一个无参 Composable"是 3.x 阶段的轻量做法；ViewModel/Repository/feature 模块拆分按 plan 节奏分步引入，避免过早架构
+
+**遗留项**：
+- TODO-3.1-1：`MainTab.kt:7` 残留 `import androidx.compose.material.icons.filled.Person`（未使用 import），下次 Optimize Imports 时清
+
+---
+
 ## 2026-06-03 第 2.3 步 主页框架 — 文档回填
 
 **改动文件清单**：

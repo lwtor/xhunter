@@ -42,5 +42,5 @@ private fun MainScreenPreview_Explore() {
 @Preview(showBackground = true, showSystemUi = true, name = "Profile Tab")
 @Composable
 private fun MainScreenPreview_Profile() {
-    MainScreen(component = PreviewRootComponent(MainTab.PROFILE))
+    MainScreen(component = PreviewRootComponent(MainTab.CATEGORIES))
 }

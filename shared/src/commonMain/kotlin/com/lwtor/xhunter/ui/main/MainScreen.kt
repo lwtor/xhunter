@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.lwtor.xhunter.ui.home.HomeScreen
 
 @Composable
 fun MainScreen(
@@ -44,13 +45,18 @@ fun MainScreen(
         Box(
             modifier = Modifier.fillMaxSize().padding(innerPadding)
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize().align(Alignment.Center)
-            ) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = "当前 Tab: ${selected.label}"
-                )
+            when (selected) {
+                MainTab.HOME -> HomeScreen()
+                MainTab.FAVORITES,
+                MainTab.EXPLORE,
+                MainTab.CATEGORIES -> {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = selected.label
+                        )
+                    }
+                }
             }
         }
     }
