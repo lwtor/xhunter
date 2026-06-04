@@ -103,15 +103,18 @@
 | 协作边界变化 | **本步开始 AI 不再介入 UI 细节**（布局/视觉/文案/命名/文件拆分粒度），仅负责逻辑层（编译、KMP 边界、状态流、模块依赖、平台 API 隔离）；详见 `docs/dev-logs/3.1-home-ui/04-summary.md` §二 |
 | 关键踩坑 | `Icons.Filled.Category` / `Icons.Filled.GridView` 在当前 compose 版本的 core 包内均不存在，最终用 `Icons.Filled.Menu` 兜底（详见本步 02-qa.md）；MainScreen 出现过一行 IDE 误补全的 `import com.sun.tools.javac.Main`，KMP commonMain 严禁引 JDK 内部 API，已修复 |
 
-#### 3.2 ViewModel + MVI
+#### 3.2 ViewModel + MVI ✅（2026-06-04 完成）
 
 | 字段 | 内容 |
 | --- | --- |
 | 目标 | 顶部 Tab 切换会改变下方网格内容（仍是写死数据，但通过 State 驱动） |
-| AI 角色 | 出 `ExploreIntent`/`State`/`Effect` + ViewModel 骨架 |
-| 用户角色 | 实现 `onIntent` 处理 + Composable 订阅 State |
-| 涉及模块 | feature-explore |
-| 完成验收 | 切顶 Tab，网格内容变化（State 驱动） |
+| AI 角色 | 出教学级 spec（HomeContract/HomeComponent/SharedModule/RootComponent/MainScreen/HomeScreen/Preview 全链路完整代码 + 概念速查表） |
+| 用户角色 | 按子步骤 a~g 实现全部代码 |
+| 涉及模块 | shared（commonMain `ui.home` + `ui.main` + `di` + androidMain Preview） |
+| 完成验收 | 切二级 Tab（推荐/分类/排行），列表内容随 State 变化；切主页 Tab 再切回状态保留 |
+| 实际产物 | `HomeContract.kt`（MVI 契约）+ `HomeComponent.kt`（接口+实现）+ `SharedModule.kt` 追加注册 + `RootComponent.kt` 加 homeComponent + `MainScreen.kt` 透传 + `HomeScreen.kt` 改签名为 Component 模式 + `MainScreenPreview.kt` 适配；归档于 `docs/dev-logs/3.2-home-mvi/` |
+| 遗留项 | LEGACY-3.2-1（RootComponent 误引 import）/ LEGACY-3.2-2/3（commonMain @Preview 与 androidMain 重复）/ LEGACY-3.2-4（HomeComic KDoc 过简） |
+| 协作规则更新 | DEVELOPMENT_RULES.md §8 新增「Spec 文档标准（教学级，强制）」6 条规则 |
 
 #### 3.3 Mock 数据层 + Coil3 封面
 
@@ -345,7 +348,7 @@ AI：Code Review + 测试模板
 - [x] 计划制定完成（2026-06-02）
 - [x] 第 1 步：项目搭建（2026-06-02 完成）
 - [x] 第 2 步：主页框架（2026-06-03 完成：2.1 ✅ / 2.2.a ✅ / 2.2.b ✅ / 2.3 ✅）
-- [~] 第 3 步：首页（进行中：3.1 ✅）
+- [~] 第 3 步：首页（进行中：3.1 ✅ / 3.2 ✅）
 - [ ] 第 4 步：详情页
 - [ ] 第 5 步：阅读器
 - [ ] 第 6 步：收藏页

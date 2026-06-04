@@ -16,7 +16,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.lwtor.xhunter.ui.home.HomeComponent
+import com.lwtor.xhunter.ui.home.HomeIntent
 import com.lwtor.xhunter.ui.home.HomeScreen
+import com.lwtor.xhunter.ui.home.HomeState
 
 @Composable
 fun MainScreen(
@@ -46,7 +49,7 @@ fun MainScreen(
             modifier = Modifier.fillMaxSize().padding(innerPadding)
         ) {
             when (selected) {
-                MainTab.HOME -> HomeScreen()
+                MainTab.HOME -> HomeScreen(component = component.homeComponent)
                 MainTab.FAVORITES,
                 MainTab.EXPLORE,
                 MainTab.CATEGORIES -> {
@@ -70,6 +73,15 @@ private fun MainScreenPreview() {
         component = object : RootComponent {
             override val selectedTab: Value<MainTab>
                 get() = MutableValue(MainTab.HOME)
+            override val homeComponent: HomeComponent
+                get() = object : HomeComponent {
+                    override val state: Value<HomeState>
+                        get() = MutableValue(HomeState())
+
+                    override fun onIntent(intent: HomeIntent) {
+
+                    }
+                }
 
             override fun onTabSelected(tab: MainTab) {
 

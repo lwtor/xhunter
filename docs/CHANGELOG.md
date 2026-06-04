@@ -211,3 +211,37 @@
 - S5：未提到 ProGuard / R8 / iOS dSYM / Desktop 签名等"发布期"关注点 — 留到第 10.3 / 11.3 步
 
 ---
+
+## 2026-06-04 第 3.2 步 首页 — ViewModel + MVI
+
+**改动文件清单**：
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/home/HomeContract.kt` — 新增，MVI 契约文件（HomeState / HomeSubTab / HomeComic / HomeIntent / HomeEffect）
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/home/HomeComponent.kt` — 新增，`HomeComponent` 接口 + `DefaultHomeComponent` 实现（MutableValue 状态持有 + onIntent 处理 + 写死数据生成）
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/di/SharedModule.kt` — 追加 `factory<HomeComponent>` 注册
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/RootComponent.kt` — 接口新增 `homeComponent: HomeComponent`；实现类加 `KoinComponent` + `childContext("home")` 注入
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/main/MainScreen.kt` — HOME 分支改为 `HomeScreen(component = component.homeComponent)`
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/home/HomeScreen.kt` — 签名改为 `HomeScreen(component: HomeComponent)`，删写死数据，用 `subscribeAsState()` 读状态 + `onIntent()` 发意图
+- `shared/src/androidMain/kotlin/com/lwtor/xhunter/ui/main/MainScreenPreview.kt` — PreviewRootComponent 新增 `homeComponent` 假实现
+- `docs/DEVELOPMENT_RULES.md` — §8 新增「Spec 文档标准（教学级，强制）」子章节
+- `docs/dev-logs/3.2-home-mvi/01-spec.md` / `03-review.md` — 本步开发文档归档
+
+**功能变化**：
+- 首页二级 Tab（推荐/分类/排行）切换后，下方漫画列表内容随之变化（由 State 驱动，不再用 mutableStateOf）
+- 首页状态由 `DefaultHomeComponent` 持有，UI 只读 state + 发 intent，实现 MVI 单向数据流
+- 切主页 Tab 再切回，首页二级 Tab 选择保留（Decompose childContext 生命周期跟随 Root）
+
+**学习要点**：
+- MVI 契约拆分：State（页面长什么样）/ Intent（用户想干什么）/ Effect（一次性事件，本步留空）
+- `sealed interface` 做 Intent 的好处：编译器强制 when 穷举，不会漏分支
+- Decompose `Value< T>` / `MutableValue< T>` ≈ `StateFlow` / `MutableStateFlow`；`subscribeAsState()` ≈ `collectAsState()`
+- `childContext("home")` 给子 Component 分配独立上下文，状态保存与恢复跟着父走
+- `KoinComponent` 让非 Koin 管理的类（如 DefaultRootComponent）也能用 `get {}` 注入
+- Spec 教学级标准：全局观（现状 vs 目标图 + 数据流图）+ 完整可粘贴代码 + 概念速查表 + 验证清单
+
+**遗留项**（非阻塞，建议项）：
+- LEGACY-3.2-1：`RootComponent.kt:11` 误引 `import kotlin.coroutines.EmptyCoroutineContext.get`，建议删除
+- LEGACY-3.2-2：`MainScreen.kt` commonMain 里的 `@Preview` 与 androidMain `MainScreenPreview.kt` 重复，建议删 commonMain 的
+- LEGACY-3.2-3：`HomeScreen.kt` commonMain 里的 `@Preview` 同理建议移走或删掉
+- LEGACY-3.2-4：`HomeContract.kt` KDoc `/** HomeComic */` 过简，建议补一句用途说明
+
+---

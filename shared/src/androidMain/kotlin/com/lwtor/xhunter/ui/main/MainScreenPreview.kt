@@ -4,6 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.lwtor.xhunter.ui.home.HomeComic
+import com.lwtor.xhunter.ui.home.HomeComponent
+import com.lwtor.xhunter.ui.home.HomeIntent
+import com.lwtor.xhunter.ui.home.HomeState
+import com.lwtor.xhunter.ui.home.HomeSubTab
 
 /**
  * Preview 专用的 Fake RootComponent。
@@ -19,6 +24,19 @@ private class PreviewRootComponent(
 ) : RootComponent {
     override val selectedTab: Value<MainTab> = MutableValue(initialTab)
     override fun onTabSelected(tab: MainTab) = Unit
+
+    override val homeComponent: HomeComponent = object : HomeComponent {
+        override val state: Value<HomeState> = MutableValue(
+            HomeState(
+                selectedSubTab = HomeSubTab.RECOMMEND,
+                comics = List(3) {
+                    HomeComic("preview-${it}", "预览漫画 $it", "预览作者")
+                }
+            )
+        )
+
+        override fun onIntent(intent: HomeIntent) = Unit
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true, name = "Home Tab")
