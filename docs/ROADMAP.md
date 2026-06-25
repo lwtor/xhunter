@@ -116,15 +116,17 @@
 | 遗留项 | LEGACY-3.2-1（RootComponent 误引 import）/ LEGACY-3.2-2/3（commonMain @Preview 与 androidMain 重复）/ LEGACY-3.2-4（HomeComic KDoc 过简） |
 | 协作规则更新 | DEVELOPMENT_RULES.md §8 新增「Spec 文档标准（教学级，强制）」6 条规则 |
 
-#### 3.3 Mock 数据层 + Coil3 封面
+#### 3.3 Mock 数据层 + Coil3 封面 ✅（2026-06-10 完成）
 
 | 字段 | 内容 |
 | --- | --- |
 | 目标 | 卡片显示真实网络图片（Coil3 加载占位 URL），有 loading/empty/error 三态 |
-| AI 角色 | 出 `MockComicRepository` + `ComicRepository` 接口 + Coil3 配置 |
-| 用户角色 | 实现 `GetExploreListUseCase`、UI 三态分支 |
-| 涉及模块 | feature-explore / shared-domain / data-comic |
-| 完成验收 | 首屏看到 Coil 加载占位图（picsum.photos）；模拟下拉刷新能看到 loading 圈 |
+| AI 角色 | 出教学级 spec（ComicRepository/MockComicRepository/GetHomeComicUseCase/Coil3 配置/三态 UI 完整代码 + 踩坑预警 + 概念速查表） |
+| 用户角色 | 实现 data/domain 层、改造 Component 和 HomeScreen |
+| 涉及模块 | shared（`data` / `domain` / `ui.home` / `App.kt` / `di` + `androidMain` Preview） |
+| 完成验收 | 首屏先转圈→1秒后出现 2 列封面图网格；切 Tab 重新 loading；卡片内图片有 loading/error 占位 |
+| 实际产物 | `ComicRepository.kt` + `MockComicRepository.kt`（data 层）+ `GetHomeComicUseCase.kt`（domain 层）+ `HomeComponent.kt`（注入 UseCase+三态）+ `App.kt`（setSingletonImageLoaderFactory）+ `HomeScreen.kt`（SubcomposeAsyncImage+网格+三态）+ Coil3/Ktor3 依赖；归档于 `docs/dev-logs/3.3-home-mock-coil/` |
+| 建议项 | SUGGEST-3.3-1（`HomeComic` 移到 `domain.model` 消除 data→ui 反向依赖）/ SUGGEST-3.3-2（协程 scope 改用 Decompose lifecycle 感知） |
 
 ---
 
@@ -348,7 +350,7 @@ AI：Code Review + 测试模板
 - [x] 计划制定完成（2026-06-02）
 - [x] 第 1 步：项目搭建（2026-06-02 完成）
 - [x] 第 2 步：主页框架（2026-06-03 完成：2.1 ✅ / 2.2.a ✅ / 2.2.b ✅ / 2.3 ✅）
-- [~] 第 3 步：首页（进行中：3.1 ✅ / 3.2 ✅）
+- [~] 第 3 步：首页（进行中：3.1 ✅ / 3.2 ✅ / 3.3 ✅）
 - [ ] 第 4 步：详情页
 - [ ] 第 5 步：阅读器
 - [ ] 第 6 步：收藏页

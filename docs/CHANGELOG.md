@@ -120,7 +120,7 @@
 
 ---
 
-<!-- 第 2.2.b 步完成后从这里开始追加 -->
+<!-- 第 3.3 步完成后追加 -->
 
 ## 2026-06-03 第 2.2.b 步 主页框架 — Koin DI 接入
 
@@ -243,5 +243,38 @@
 - LEGACY-3.2-2：`MainScreen.kt` commonMain 里的 `@Preview` 与 androidMain `MainScreenPreview.kt` 重复，建议删 commonMain 的
 - LEGACY-3.2-3：`HomeScreen.kt` commonMain 里的 `@Preview` 同理建议移走或删掉
 - LEGACY-3.2-4：`HomeContract.kt` KDoc `/** HomeComic */` 过简，建议补一句用途说明
+
+---
+
+## 2026-06-10 第 3.3 步 首页 — Mock 数据层 + Coil3 封面加载
+
+**改动文件清单**：
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/home/HomeContract.kt` — `HomeComic` 新增 `coverUrl: String`；`HomeState` 新增 `isLoading: Boolean` + `error: String?`；`HomeIntent` 新增 `Refresh`
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/data/ComicRepository.kt` — 新增，漫画数据仓库接口
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/data/MockComicRepository.kt` — 新增，Mock 实现（picsum.photos 占位图 + 800ms 延迟）
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/domain/GetHomeComicUseCase.kt` — 新增，首页漫画列表用例（透传 Repository）
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/home/HomeComponent.kt` — 改造：注入 UseCase、删 generateComics、加协程 + 三态处理
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/App.kt` — 添加 `setSingletonImageLoaderFactory` + `KtorNetworkFetcherFactory` 配置
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/ui/home/HomeScreen.kt` — 完整改造：`SubcomposeAsyncImage` 封面 + 2 列网格 + loading/empty/error 三态
+- `shared/src/commonMain/kotlin/com/lwtor/xhunter/di/SharedModule.kt` — 追加 `ComicRepository`（single）+ `GetHomeComicUseCase`（factory）注册
+- `shared/src/androidMain/kotlin/com/lwtor/xhunter/ui/main/MainScreenPreview.kt` — Preview 适配新 `HomeComic` 签名
+- `gradle/libs.versions.toml` — 新增 `coil3` / `coil3-compose` / `coil3-network-ktor3` / `ktor-client-core` / `ktor-client-okhttp` 依赖
+- `shared/build.gradle.kts` — `commonMain` 追加 coil3 + coil3-compose + coil3-network-ktor3 + ktor-client-core；`androidMain` 追加 ktor-client-okhttp
+- `docs/dev-logs/3.3-home-mock-coil/01-spec.md` / `02-qa.md` / `03-review.md` — 本步开发文档归档
+
+**功能变化**：
+- 首页漫画卡片从纯文字变成有封面图的卡片（Coil3 加载 picsum.photos 网络图片）
+- 切换二级 Tab 时先看到 loading 转圈，约 1 秒后出现图片网格
+- 全页三态：loading（转圈）/ empty（"暂无漫画"）/ error（错误信息 + 重试按钮）
+- 单张卡片内部也有图片级三态：loading（灰色底 + 小转圈）/ error（灰色底 + "加载失败"）/ success（封面图）
+
+**学习要点**：
+- Repository 模式：把"数据从哪来"的实现藏在一个接口后面，Component 只依赖接口不依赖实现
+- UseCase 层：即使只做透传，也存在架构意义（缓存/合并逻辑可加在 UseCase 里而不改 Component）
+- Coil 3 KMP：`coil-compose`（UI 组件）+ `coil-network-ktor3`（网络层）+ `coil` 核心库（PlatformContext 等基础类型）三件套缺一不可
+- `setSingletonImageLoaderFactory` 是 Composable 函数，必须在第一个 AsyncImage 出现之前调用，通常放在 App() 顶部
+- `SubcomposeAsyncImage` 比 `AsyncImage` 多了 loading/error 子组合能力，适合需要自定义占位 UI 的场景
+- Ktor 在 Coil 3 KMP 中充当网络底层；Android 端用 `ktor-client-okhttp` 引擎，iOS/Desktop 引擎留到第 9/10 步
+- `LazyVerticalGrid` + `GridCells.Fixed(2)` 实现两列网格布局
 
 ---

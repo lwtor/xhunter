@@ -28,12 +28,9 @@ private class PreviewRootComponent(
     override val homeComponent: HomeComponent = object : HomeComponent {
         override val state: Value<HomeState> = MutableValue(
             HomeState(
-                selectedSubTab = HomeSubTab.RECOMMEND,
-                comics = List(3) {
-                    HomeComic("preview-${it}", "预览漫画 $it", "预览作者")
-                }
-            )
-        )
+            selectedSubTab = HomeSubTab.RECOMMEND, comics = List(3) {
+                HomeComic("preview-${it}", "预览漫画 $it", "预览作者", "预览封面")
+            }))
 
         override fun onIntent(intent: HomeIntent) = Unit
     }
